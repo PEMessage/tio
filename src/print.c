@@ -27,7 +27,23 @@ char ansi_format[30];
 void print_hex(char c)
 {
     print_tainted = true;
+    if (option.color > 0) {
+        if (c > 31 && c < 127) {
+            printf("\033[32m"); // COLOR_GREEN
+        } else if (c == 9 || c == 10 || c == 13) {
+            printf("\033[33m"); // COLOR_YELLOW
+        } else if (c == 0) {
+            printf("\033[37m"); // COLOR_WHITE
+        } else if (c == 255) {
+            printf("\033[34m"); // COLOR_BLUE
+        } else {
+            printf("\033[31m"); // COLOR_RED
+        }
+    }
     printf("%02x ", (unsigned char) c);
+    if (option.color > 0) {
+        printf("\033[0m");
+    }
 }
 
 void print_normal(char c)
