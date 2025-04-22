@@ -27,6 +27,8 @@ char ansi_format[30];
 
 void print_hex(char c)
 {
+    static char last_c = 0;
+
     print_tainted = true;
     if (option.color > 0) {
         if (c == 32 ) {
@@ -45,8 +47,14 @@ void print_hex(char c)
     }
 
     if (option.hex_mode == HEX_MODE_MIX ) {
+        if ( last_c > 31 && last_c < 127 && c > 31 && c < 127) {
+            printf("\b");
+        }
+
         if (c == 32 ) {
             printf("_ ");
+        } else if (last_c == '\r' && c == '\n') {
+            printf("%02x \r\n", (unsigned char) c);
         } else if (c > 32 && c < 127) {
             printf("%c ", (unsigned char) c);
         } else {
@@ -67,6 +75,8 @@ void print_hex(char c)
     if (option.color > 0) {
         printf("\033[0m");
     }
+
+    last_c = c;
 }
 
 void print_normal(char c)
