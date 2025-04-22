@@ -153,7 +153,7 @@ void option_print_help(char *argv[])
     printf("  -e, --local-echo                       Enable local echo\n");
     printf("      --input-mode normal|hex|line       Select input mode (default: normal)\n");
     printf("      --output-mode normal|hex|hexN      Select output mode (default: normal)\n");
-    printf("      --hex-mode normal|mix              Select hex mode (default: normal)\n");
+    printf("      --hex-mode normal|mix|mix2         Select hex mode (default: normal)\n");
     printf("  -t, --timestamp                        Enable line timestamp\n");
     printf("      --timestamp-format <format>        Set timestamp format (default: 24hour)\n");
     printf("      --timestamp-timeout <ms>           Set timestamp timeout (default: 200)\n");
@@ -677,6 +677,10 @@ void option_parse_hex_mode(const char *arg, hex_mode_t *mode)
     {
         *mode = HEX_MODE_MIX;
     }
+    else if (strcmp("mix2", arg) == 0)
+    {
+        *mode = HEX_MODE_MIX2;
+    }
     else
     {
         tio_error_print("Invalid output mode '%s'", arg);
@@ -724,7 +728,9 @@ const char *option_hex_mode_to_string(hex_mode_t mode)
             return "normal";
         case HEX_MODE_MIX:
             return "mix";
-        case OUTPUT_MODE_END:
+        case HEX_MODE_MIX2:
+            return "mix2";
+        case HEX_MODE_END:
             break;
     }
 

@@ -47,6 +47,7 @@ typedef enum
 {
     HEX_MODE_NORMAL,
     HEX_MODE_MIX,
+    HEX_MODE_MIX2,
     HEX_MODE_END,
 } hex_mode_t;
 

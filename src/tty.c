@@ -1003,7 +1003,11 @@ void handle_command_sequence(char input_char, char *output_char, bool *forward)
                         tio_printf("Switched hex mode to mix");
                         break;
 
-                    case OUTPUT_MODE_END:
+                    case HEX_MODE_MIX2:
+                        tio_printf("Switched hex mode to mix2");
+                        break;
+
+                    case HEX_MODE_END:
                         option.hex_mode = HEX_MODE_NORMAL;
                         tio_printf("Switched hex mode to normal");
                         break;

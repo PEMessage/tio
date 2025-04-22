@@ -46,6 +46,14 @@ void print_hex(char c)
 
     if (option.hex_mode == HEX_MODE_MIX ) {
         if (c == 32 ) {
+            printf("_ ");
+        } else if (c > 32 && c < 127) {
+            printf("%c ", (unsigned char) c);
+        } else {
+            printf("%02x ", (unsigned char) c);
+        }
+    } else if (option.hex_mode == HEX_MODE_MIX2 ) {
+        if (c == 32 ) {
             printf("__ ");
         } else if (c > 32 && c < 127) {
             printf("%c  ", (unsigned char) c);
