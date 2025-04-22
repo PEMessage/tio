@@ -107,6 +107,7 @@
 #define KEY_F 0x66
 #define KEY_SHIFT_F 0x46
 #define KEY_G 0x67
+#define KEY_H 0x68
 #define KEY_I 0x69
 #define KEY_L 0x6C
 #define KEY_SHIFT_L 0x4C
@@ -849,6 +850,7 @@ void handle_command_sequence(char input_char, char *output_char, bool *forward)
                 tio_printf(" ctrl-%c f       Toggle log to file", option.prefix_key);
                 tio_printf(" ctrl-%c F       Flush data I/O buffers", option.prefix_key);
                 tio_printf(" ctrl-%c g       Toggle serial port line", option.prefix_key);
+                tio_printf(" ctrl-%c h       Toggle hex mode", option.prefix_key);
                 tio_printf(" ctrl-%c i       Toggle input mode", option.prefix_key);
                 tio_printf(" ctrl-%c l       Clear screen", option.prefix_key);
                 tio_printf(" ctrl-%c L       Show line states", option.prefix_key);
@@ -986,6 +988,24 @@ void handle_command_sequence(char input_char, char *output_char, bool *forward)
                         option.output_mode = OUTPUT_MODE_NORMAL;
                         tty_output_mode_set(OUTPUT_MODE_NORMAL);
                         tio_printf("Switched output mode to normal");
+                        break;
+                }
+                break;
+
+            case KEY_H:
+                option.hex_mode += 1;
+                switch (option.hex_mode)
+                {
+                    case HEX_MODE_NORMAL:
+                        break;
+
+                    case HEX_MODE_MIX:
+                        tio_printf("Switched hex mode to mix");
+                        break;
+
+                    case OUTPUT_MODE_END:
+                        option.hex_mode = HEX_MODE_NORMAL;
+                        tio_printf("Switched hex mode to normal");
                         break;
                 }
                 break;
