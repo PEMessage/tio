@@ -43,6 +43,13 @@ typedef enum
     OUTPUT_MODE_END,
 } output_mode_t;
 
+typedef enum
+{
+    HEX_MODE_NORMAL,
+    HEX_MODE_MIX,
+    HEX_MODE_END,
+} hex_mode_t;
+
 /* Options */
 struct option_t
 {
@@ -73,6 +80,7 @@ struct option_t
     int color;
     input_mode_t input_mode;
     output_mode_t output_mode;
+    hex_mode_t hex_mode;
     char prefix_code;
     char prefix_key;
     bool prefix_enabled;

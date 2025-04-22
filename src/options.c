@@ -19,6 +19,7 @@
  * 02110-1301, USA.
  */
 
+#include "options.h"
 #define _GNU_SOURCE // To access vasprintf
 
 #include <assert.h>
@@ -55,6 +56,7 @@ enum opt_t
     OPT_SCRIPT_RUN,
     OPT_INPUT_MODE,
     OPT_OUTPUT_MODE,
+    OPT_HEX_MODE,
     OPT_EXCLUDE_DEVICES,
     OPT_EXCLUDE_DRIVERS,
     OPT_EXCLUDE_TIDS,
@@ -91,6 +93,7 @@ struct option_t option =
     .color = 256, // Bold
     .input_mode = INPUT_MODE_NORMAL,
     .output_mode = OUTPUT_MODE_NORMAL,
+    .hex_mode = HEX_MODE_NORMAL,
     .prefix_code = 20, // ctrl-t
     .prefix_key = 't',
     .prefix_enabled = true,
@@ -150,6 +153,7 @@ void option_print_help(char *argv[])
     printf("  -e, --local-echo                       Enable local echo\n");
     printf("      --input-mode normal|hex|line       Select input mode (default: normal)\n");
     printf("      --output-mode normal|hex|hexN      Select output mode (default: normal)\n");
+    printf("      --hex-mode normal|mix              Select hex mode (default: normal)\n");
     printf("  -t, --timestamp                        Enable line timestamp\n");
     printf("      --timestamp-format <format>        Set timestamp format (default: 24hour)\n");
     printf("      --timestamp-timeout <ms>           Set timestamp timeout (default: 200)\n");
@@ -661,6 +665,25 @@ void option_parse_output_mode(const char *arg, output_mode_t *mode)
     }
 }
 
+void option_parse_hex_mode(const char *arg, hex_mode_t *mode)
+{
+    assert(arg != NULL);
+
+    if (strcmp("normal", arg) == 0)
+    {
+        *mode = HEX_MODE_NORMAL;
+    }
+    else if (strcmp("mix", arg) == 0)
+    {
+        *mode = HEX_MODE_MIX;
+    }
+    else
+    {
+        tio_error_print("Invalid output mode '%s'", arg);
+        exit(EXIT_FAILURE);
+    }
+}
+
 const char *option_input_mode_to_string(input_mode_t mode)
 {
     switch (mode)
@@ -686,6 +709,21 @@ const char *option_output_mode_to_string(output_mode_t mode)
             return "normal";
         case OUTPUT_MODE_HEX:
             return "hex";
+        case OUTPUT_MODE_END:
+            break;
+    }
+
+    return NULL;
+}
+
+const char *option_hex_mode_to_string(hex_mode_t mode)
+{
+    switch (mode)
+    {
+        case HEX_MODE_NORMAL:
+            return "normal";
+        case HEX_MODE_MIX:
+            return "mix";
         case OUTPUT_MODE_END:
             break;
     }
@@ -827,6 +865,7 @@ void options_print()
                                                                             option.ri_pulse_duration);
     tio_printf(" Input mode: %s", option_input_mode_to_string(option.input_mode));
     tio_printf(" Output mode: %s", option_output_mode_to_string(option.output_mode));
+    tio_printf(" Hex mode: %s", option_hex_mode_to_string(option.hex_mode));
     tio_printf(" Alert: %s", option_alert_state_to_string(option.alert));
     if (option.log)
     {
@@ -905,6 +944,7 @@ void options_parse(int argc, char *argv[])
             {"color",                required_argument, 0, 'c'                     },
             {"input-mode",           required_argument, 0, OPT_INPUT_MODE          },
             {"output-mode",          required_argument, 0, OPT_OUTPUT_MODE         },
+            {"hex-mode",             required_argument, 0, OPT_HEX_MODE            },
             {"rs-485",               no_argument,       0, OPT_RS485               },
             {"rs-485-config",        required_argument, 0, OPT_RS485_CONFIG        },
             {"alert",                required_argument, 0, OPT_ALERT               },
@@ -1056,6 +1096,9 @@ void options_parse(int argc, char *argv[])
 
             case OPT_OUTPUT_MODE:
                 option_parse_output_mode(optarg, &option.output_mode);
+                break;
+            case OPT_HEX_MODE:
+                option_parse_hex_mode(optarg, &option.hex_mode);
                 break;
 
             case OPT_RS485:
