@@ -20,6 +20,7 @@
  */
 
 #include "print.h"
+#include "options.h"
 
 bool print_tainted = false;
 char ansi_format[30];
@@ -28,7 +29,9 @@ void print_hex(char c)
 {
     print_tainted = true;
     if (option.color > 0) {
-        if (c > 31 && c < 127) {
+        if (c == 32 ) {
+            printf("\033[37m"); // COLOR_WHITE for space
+        } else if (c > 32 && c < 127) {
             printf("\033[32m"); // COLOR_GREEN
         } else if (c == 9 || c == 10 || c == 13) {
             printf("\033[33m"); // COLOR_YELLOW
@@ -40,7 +43,19 @@ void print_hex(char c)
             printf("\033[31m"); // COLOR_RED
         }
     }
-    printf("%02x ", (unsigned char) c);
+
+    if (option.hex_mode == HEX_MODE_MIX ) {
+        if (c == 32 ) {
+            printf("_ ");
+        } else if (c > 32 && c < 127) {
+            printf("%c ", (unsigned char) c);
+        } else {
+            printf("%02x ", (unsigned char) c);
+        }
+    } else {
+        printf("%02x ", (unsigned char) c);
+    }
+
     if (option.color > 0) {
         printf("\033[0m");
     }
