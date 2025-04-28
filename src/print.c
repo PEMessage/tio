@@ -25,58 +25,114 @@
 bool print_tainted = false;
 char ansi_format[30];
 
-void print_hex(char c)
+// Color escape codes
+#define COLOR_RESET_CODE   "\033[0m"
+#define COLOR_RED_CODE     "\033[31m"
+#define COLOR_GREEN_CODE   "\033[32m"
+#define COLOR_YELLOW_CODE  "\033[33m"
+#define COLOR_BLUE_CODE    "\033[34m"
+#define COLOR_WHITE_CODE   "\033[37m"
+
+// Character type constants
+// Character type constants
+#define SPACE_CHAR    ' '
+#define TAB_CHAR      '\t'
+#define NEWLINE_CHAR  '\n'
+#define CARRIAGE_RETURN_CHAR '\r'
+#define DELETE_CHAR   '\b'  // DEL character (still hex as it has no literal)
+#define NULL_CHAR     '\0'
+#define MAX_CHAR      0xFF  // Still keeping as hex for max byte value
+
+typedef enum {
+    COLOR_NONE = 0,
+    COLOR_WHITE,
+    COLOR_GREEN,
+    COLOR_YELLOW,
+    COLOR_BLUE,
+    COLOR_RED
+} ColorCode;
+
+
+void print_hex(char current_char)
 {
-    static char last_c = 0;
+    static char previous_char = 0;
+    static ColorCode previous_color = COLOR_NONE;
+
+    const bool is_printable = (current_char > 32 && current_char < 127);
+    const bool was_printable = (previous_char > 31 && previous_char < 127);
+    ColorCode current_color = COLOR_NONE;
 
     print_tainted = true;
+
+    /* Determine current color */
     if (option.color > 0) {
-        if (c == 32 ) {
-            printf("\033[37m"); // COLOR_WHITE for space
-        } else if (c > 32 && c < 127) {
-            printf("\033[32m"); // COLOR_GREEN
-        } else if (c == 9 || c == 10 || c == 13) {
-            printf("\033[33m"); // COLOR_YELLOW
-        } else if (c == 0) {
-            printf("\033[37m"); // COLOR_WHITE
-        } else if (c == 255) {
-            printf("\033[34m"); // COLOR_BLUE
+        if (current_char == SPACE_CHAR) {
+            current_color = COLOR_WHITE;
+        } else if (is_printable) {
+            current_color = COLOR_GREEN;
+        } else if (current_char == TAB_CHAR ||
+                   current_char == NEWLINE_CHAR ||
+                   current_char == CARRIAGE_RETURN_CHAR) {
+            current_color = COLOR_YELLOW;
+        } else if (current_char == 0) {
+            current_color = COLOR_WHITE;
+        } else if (current_char == (char)MAX_CHAR) {
+            current_color = COLOR_BLUE;
         } else {
-            printf("\033[31m"); // COLOR_RED
+            current_color = COLOR_RED;
+        }
+
+        /* Only change color if different from previous */
+        if (current_color != previous_color) {
+            if (previous_color != COLOR_NONE) {
+                printf(COLOR_RESET_CODE);
+            }
+            switch (current_color) {
+                case COLOR_WHITE: printf(COLOR_WHITE_CODE); break;
+                case COLOR_GREEN: printf(COLOR_GREEN_CODE); break;
+                case COLOR_YELLOW: printf(COLOR_YELLOW_CODE); break;
+                case COLOR_BLUE: printf(COLOR_BLUE_CODE); break;
+                case COLOR_RED: printf(COLOR_RED_CODE); break;
+                default: break;
+            }
+            previous_color = current_color;
         }
     }
 
-    if (option.hex_mode == HEX_MODE_MIX ) {
-        if ( last_c > 31 && last_c < 127 && c > 31 && c < 127) {
-            printf("\b");
-        }
+    /* Hex mode printing */
+    switch (option.hex_mode) {
+        case HEX_MODE_MIX:
+            if (was_printable && is_printable) {
+                printf("\b");  // Backspace for consecutive printable chars
+            }
 
-        if (c == 32 ) {
-            printf("_ ");
-        } else if (last_c == '\r' && c == '\n') {
-            printf("%02x \r\n", (unsigned char) c);
-        } else if (c > 32 && c < 127) {
-            printf("%c ", (unsigned char) c);
-        } else {
-            printf("%02x ", (unsigned char) c);
-        }
-    } else if (option.hex_mode == HEX_MODE_MIX2 ) {
-        if (c == 32 ) {
-            printf("__ ");
-        } else if (c > 32 && c < 127) {
-            printf("%c  ", (unsigned char) c);
-        } else {
-            printf("%02x ", (unsigned char) c);
-        }
-    } else {
-        printf("%02x ", (unsigned char) c);
+            if (current_char == SPACE_CHAR) {
+                printf("_ ");
+            } else if (previous_char == CARRIAGE_RETURN_CHAR && current_char == NEWLINE_CHAR) {
+                printf("%02x \r\n", (unsigned char)current_char);
+            } else if (is_printable) {
+                printf("%c ", (unsigned char)current_char);
+            } else {
+                printf("%02x ", (unsigned char)current_char);
+            }
+            break;
+
+        case HEX_MODE_MIX2:
+            if (current_char == SPACE_CHAR) {
+                printf("__ ");
+            } else if (is_printable) {
+                printf("%c  ", (unsigned char)current_char);
+            } else {
+                printf("%02x ", (unsigned char)current_char);
+            }
+            break;
+
+        default:  // Regular hex mode
+            printf("%02x ", (unsigned char)current_char);
+            break;
     }
 
-    if (option.color > 0) {
-        printf("\033[0m");
-    }
-
-    last_c = c;
+    previous_char = current_char;
 }
 
 void print_normal(char c)
