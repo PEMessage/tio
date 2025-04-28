@@ -138,45 +138,45 @@ void option_print_help(char *argv[])
     printf("Connect to TTY device directly or via configuration profile or topology ID.\n");
     printf("\n");
     printf("Options:\n");
-    printf("  -b, --baudrate <bps>                   Baud rate (default: 115200)\n");
-    printf("  -d, --databits 5|6|7|8                 Data bits (default: 8)\n");
-    printf("  -f, --flow hard|soft|none              Flow control (default: none)\n");
-    printf("  -s, --stopbits 1|2                     Stop bits (default: 1)\n");
-    printf("  -p, --parity odd|even|none|mark|space  Parity (default: none)\n");
-    printf("  -o, --output-delay <ms>                Output character delay (default: 0)\n");
-    printf("  -O, --output-line-delay <ms>           Output line delay (default: 0)\n");
-    printf("      --line-pulse-duration <duration>   Set line pulse duration\n");
-    printf("  -a, --auto-connect new|latest|direct   Automatic connect strategy (default: direct)\n");
-    printf("      --exclude-devices <pattern>        Exclude devices by pattern\n");
-    printf("      --exclude-drivers <pattern>        Exclude drivers by pattern\n");
-    printf("      --exclude-tids <pattern>           Exclude topology IDs by pattern\n");
-    printf("  -n, --no-reconnect                     Do not reconnect\n");
-    printf("  -e, --local-echo                       Enable local echo\n");
-    printf("      --input-mode normal|hex|line       Select input mode (default: normal)\n");
-    printf("      --output-mode normal|hex|hexN      Select output mode (default: normal)\n");
-    printf("      --hex-mode normal|mix|mix2         Select hex mode (default: normal)\n");
-    printf("  -t, --timestamp                        Enable line timestamp\n");
-    printf("      --timestamp-format <format>        Set timestamp format (default: 24hour)\n");
-    printf("      --timestamp-timeout <ms>           Set timestamp timeout (default: 200)\n");
-    printf("  -l, --list                             List available serial devices, TIDs, and profiles\n");
-    printf("  -L, --log                              Enable log to file\n");
-    printf("      --log-file <filename>              Set log filename\n");
-    printf("      --log-directory <path>             Set log directory path for automatic named logs\n");
-    printf("      --log-append                       Append to log file\n");
-    printf("      --log-strip                        Strip control characters and escape sequences\n");
-    printf("  -m, --map <flags>                      Map characters\n");
-    printf("  -c, --color 0..255|bold|none|list      Colorize tio text (default: bold)\n");
-    printf("  -S, --socket <socket>                  Redirect I/O to socket\n");
-    printf("      --rs-485                           Enable RS-485 mode\n");
-    printf("      --rs-485-config <config>           Set RS-485 configuration\n");
-    printf("      --alert bell|blink|none            Alert on connect/disconnect (default: none)\n");
-    printf("      --mute                             Mute tio messages\n");
-    printf("      --script <string>                  Run script from string\n");
-    printf("      --script-file <filename>           Run script from file\n");
-    printf("      --script-run once|always|never     Run script on connect (default: always)\n");
-    printf("      --exec <command>                   Execute shell command with I/O redirected to device\n");
-    printf("  -v, --version                          Display version\n");
-    printf("  -h, --help                             Display help\n");
+    printf("  -b, --baudrate <bps>                     Baud rate (default: 115200)\n");
+    printf("  -d, --databits 5|6|7|8                   Data bits (default: 8)\n");
+    printf("  -f, --flow hard|soft|none                Flow control (default: none)\n");
+    printf("  -s, --stopbits 1|2                       Stop bits (default: 1)\n");
+    printf("  -p, --parity odd|even|none|mark|space    Parity (default: none)\n");
+    printf("  -o, --output-delay <ms>                  Output character delay (default: 0)\n");
+    printf("  -O, --output-line-delay <ms>             Output line delay (default: 0)\n");
+    printf("      --line-pulse-duration <duration>     Set line pulse duration\n");
+    printf("  -a, --auto-connect new|latest|direct     Automatic connect strategy (default: direct)\n");
+    printf("      --exclude-devices <pattern>          Exclude devices by pattern\n");
+    printf("      --exclude-drivers <pattern>          Exclude drivers by pattern\n");
+    printf("      --exclude-tids <pattern>             Exclude topology IDs by pattern\n");
+    printf("  -n, --no-reconnect                       Do not reconnect\n");
+    printf("  -e, --local-echo                         Enable local echo\n");
+    printf("      --input-mode normal|hex|line         Select input mode (default: normal)\n");
+    printf("      --output-mode normal|hex|hexN        Select output mode (default: normal)\n");
+    printf("      --hex-mode normal|mix|mix2           Select hex mode (default: normal)\n");
+    printf("  -t, --timestamp                          Enable line timestamp\n");
+    printf("      --timestamp-format <format>          Set timestamp format (default: 24hour)\n");
+    printf("      --timestamp-timeout <ms>             Set timestamp timeout (default: 200)\n");
+    printf("  -l, --list                               List available serial devices, TIDs, and profiles\n");
+    printf("  -L, --log                                Enable log to file\n");
+    printf("      --log-file <filename>                Set log filename\n");
+    printf("      --log-directory <path>               Set log directory path for automatic named logs\n");
+    printf("      --log-append                         Append to log file\n");
+    printf("      --log-strip                          Strip control characters and escape sequences\n");
+    printf("  -m, --map <flags>                        Map characters\n");
+    printf("  -c, --color 0..255|bold|none|list|force  Colorize tio text (default: bold)\n");
+    printf("  -S, --socket <socket>                    Redirect I/O to socket\n");
+    printf("      --rs-485                             Enable RS-485 mode\n");
+    printf("      --rs-485-config <config>             Set RS-485 configuration\n");
+    printf("      --alert bell|blink|none              Alert on connect/disconnect (default: none)\n");
+    printf("      --mute                               Mute tio messages\n");
+    printf("      --script <string>                    Run script from string\n");
+    printf("      --script-file <filename>             Run script from file\n");
+    printf("      --script-run once|always|never       Run script on connect (default: always)\n");
+    printf("      --exec <command>                     Execute shell command with I/O redirected to device\n");
+    printf("  -v, --version                            Display version\n");
+    printf("  -h, --help                               Display help\n");
     printf("\n");
     printf("Options and profiles may be set via configuration file.\n");
     printf("\n");
@@ -343,6 +343,10 @@ void option_parse_color(const char *arg, int *color)
     else if (strcmp(arg, "bold") == 0)
     {
         *color = 256; // Bold
+    }
+    else if (strcmp(arg, "force") == 0)
+    {
+        *color = 257; // force
     }
     else
     {

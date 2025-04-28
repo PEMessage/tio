@@ -243,6 +243,10 @@ static void config_parse_keys(GKeyFile *key_file, char *group)
         {
             option.color = 256; // Bold
         }
+        else if (strcmp(string, "force") == 0)
+        {
+            option.color = 257; // force
+        }
         else
         {
             option.color = atoi(string);

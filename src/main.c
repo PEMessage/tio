@@ -87,7 +87,9 @@ int main(int argc, char *argv[])
     else
     {
         // No color when piping
-        option.color = -1;
+        if ( ! (option.color > 256) ) {
+            option.color = -1;
+        }
     }
 
     /* Add log exit handler */
