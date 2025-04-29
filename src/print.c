@@ -58,7 +58,8 @@ void print_hex(char current_char)
     static char previous_char = 0;
     static ColorCode previous_color = COLOR_NONE;
 
-    const bool is_printable = (current_char > 32 && current_char < 127);
+    const bool is_printable_expect_space = (current_char > 32 && current_char < 127);
+    const bool is_printable = (current_char > 31 && current_char < 127);
     const bool was_printable = (previous_char > 31 && previous_char < 127);
     ColorCode current_color = COLOR_NONE;
 
@@ -68,7 +69,7 @@ void print_hex(char current_char)
     if (option.color > 0) {
         if (current_char == SPACE_CHAR) {
             current_color = COLOR_WHITE;
-        } else if (is_printable) {
+        } else if (is_printable_expect_space) {
             current_color = COLOR_GREEN;
         } else if (current_char == TAB_CHAR ||
                    current_char == NEWLINE_CHAR ||
@@ -102,16 +103,16 @@ void print_hex(char current_char)
     /* Hex mode printing */
     switch (option.hex_mode) {
         case HEX_MODE_MIX:
-            if (was_printable && is_printable) {
-                printf("\b");  // Backspace for consecutive printable chars
+            if (was_printable && !is_printable) {
+                printf(" ");  // Backspace for consecutive printable chars
             }
 
             if (current_char == SPACE_CHAR) {
-                printf("_ ");
+                printf("_");
             } else if (previous_char == CARRIAGE_RETURN_CHAR && current_char == NEWLINE_CHAR) {
                 printf("%02x \r\n", (unsigned char)current_char);
-            } else if (is_printable) {
-                printf("%c ", (unsigned char)current_char);
+            } else if (is_printable_expect_space) {
+                printf("%c", (unsigned char)current_char);
             } else {
                 printf("%02x ", (unsigned char)current_char);
             }
@@ -120,7 +121,7 @@ void print_hex(char current_char)
         case HEX_MODE_MIX2:
             if (current_char == SPACE_CHAR) {
                 printf("__ ");
-            } else if (is_printable) {
+            } else if (is_printable_expect_space) {
                 printf("%c  ", (unsigned char)current_char);
             } else {
                 printf("%02x ", (unsigned char)current_char);
