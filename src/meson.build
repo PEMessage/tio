@@ -47,7 +47,13 @@ tio_dep = [
   lua_dep
 ]
 
-tio_c_args = ['-Wno-unused-result']
+if host_machine.system() == 'darwin'
+  iokit_dep = dependency('appleframeworks', modules: ['IOKit'], required: true)
+  corefoundation_dep = dependency('appleframeworks', modules: ['CoreFoundation'], required: true)
+  tio_dep += [iokit_dep, corefoundation_dep]
+endif
+
+tio_c_args = ['-Wshadow']
 
 if enable_setspeed2
   tio_c_args += '-DHAVE_TERMIOS2'
